@@ -6,18 +6,33 @@ export default class Dropdown extends Component {
     className: PropTypes.string,
     children: PropTypes.node,
     onHover: PropTypes.bool,
+    delay: PropTypes.number,
+    hoverDelayIdle: PropTypes.number,
   }
 
   static defaultProps = {
     type: 'button',
     disabled: false,
     className: '',
+    hoverDelayIdle: 250,
     onHover: false,
   }
   state = { isActive: false, mode: true }
 
   handleMouseOver = () => {
-    this.setState({ isActive: !this.state.isActive })
+    if (this.props.delay) {
+      setTimeout(() => {
+        this.setState({ isActive: !this.state.isActive })
+      }, this.props.delay)
+    } else {
+      this.setState({ isActive: !this.state.isActive })
+    }
+  }
+
+  handleMouseOut = () => {
+    setTimeout(() => {
+      this.setState({ isActive: false })
+    }, this.props.hoverDelayIdle)
   }
 
   handleClick = () => {
@@ -36,6 +51,7 @@ export default class Dropdown extends Component {
         data-uk-dropdown={this.state.mode}
         aria-haspopup="true"
         aria-expanded={this.state.isActive}
+        onMouseLeave={this.handleMouseOut}
       >
         {this.props.children}
       </div>
